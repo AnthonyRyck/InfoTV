@@ -1,0 +1,16 @@
+﻿@inherits LayoutComponentBase
+
+<div class="maxsize">
+	@Body
+</div>
+
+@code
+{
+	bool Opened = true;
+
+	void ButtonClicked()
+	{
+		Opened = !Opened;
+	}
+
+}

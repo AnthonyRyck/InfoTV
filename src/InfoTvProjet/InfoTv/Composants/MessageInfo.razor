@@ -1,0 +1,16 @@
+﻿<div class="@Visibility marquee">
+	<marquee bgcolor="@ColorDisplay" 
+			behavior="alternate">@MessageToDisplay</marquee>
+</div>
+
+@code {
+
+	[Parameter]
+	public string Visibility { get; set; }
+
+	[Parameter]
+	public string ColorDisplay { get; set; }
+
+	[Parameter]
+	public string MessageToDisplay { get; set; }
+}

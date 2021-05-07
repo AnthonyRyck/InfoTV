@@ -1,0 +1,28 @@
+﻿@page "/info"
+
+@inject IInfoViewModel ViewModel
+
+<div class="row-full">
+	<div>
+		<MessageInfo ColorDisplay="@ViewModel.ColorMessage"
+					 Visibility="@ViewModel.Visibility"
+					 MessageToDisplay="@ViewModel.Message" />
+	</div>
+
+	<div class="center-content">
+		<video autoplay loop
+			class="video">
+			<source src="@ViewModel.SourcePowerpoint" type="video/mp4" />
+		</video>
+	</div>
+</div>
+
+@code {
+	protected async override void OnInitialized()
+	{
+		base.OnInitialized();
+		await ViewModel.LoadMessage();
+		StateHasChanged();
+	}
+
+}

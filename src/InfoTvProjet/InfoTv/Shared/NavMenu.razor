@@ -1,0 +1,63 @@
+﻿<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">InfoTv</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+@*<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">*@
+<div class="collapse" @onclick="ToggleNavMenu">
+	<ul class="nav flex-column">
+		<li class="nav-item px-3">
+			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				<span class="oi oi-home" aria-hidden="true"></span> Home
+			</NavLink>
+		</li>
+
+		@*Page pour les superviseurs*@
+		<li class="nav-item px-3">
+			<NavLink class="nav-link" href="superviseur">
+				<span class="oi oi-person" aria-hidden="true"></span> Superviseur
+			</NavLink>
+		</li>
+
+		@*Page pour les plateaux*@
+		<li class="nav-item px-3">
+			<NavLink class="nav-link" href="infoplateau">
+				<span class="oi oi-people" aria-hidden="true"></span> Info Plateau
+			</NavLink>
+		</li>
+
+		@*Page de Settings*@
+		<AuthorizeView Roles="Admin">
+			<li class="nav-item px-3">
+				<NavLink class="nav-link" href="settingsPage">
+					<span class="oi oi-cog" aria-hidden="true"></span> Paramètres
+				</NavLink>
+			</li>
+		</AuthorizeView>
+
+		@*Page documentation*@
+		<li class="nav-item px-3">
+			<NavLink class="nav-link" href="documentation">
+				<span class="oi oi-document" aria-hidden="true"></span> Documentation
+			</NavLink>
+		</li>
+
+		<li>
+			<LoginDisplay />
+		</li>
+	</ul>
+</div>
+
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

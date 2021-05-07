@@ -1,0 +1,86 @@
+﻿@page  "/settingsPage"
+
+@attribute [Authorize(Roles = "Admin")]
+@using InfoTv.Pages
+@using InfoTv.Data
+@using InfoTv.Codes 
+
+<h3>Fichiers de données</h3>
+
+@*Cadre pour afficher le FileUpload*@
+<MatFileUpload OnChange="@UploadFiles"
+			   title="Ajouter un fichier Excel valide, ou une vidéo MP4 de PowerPoint"
+			   Label="Déposer ou ouvrir un fichier" />
+
+<br />
+
+@*Cadre pour afficher les  infos pour les fichiers à injecter*@
+<div class="container">
+
+	<div class="row">
+		<div class="col-sm">
+			<p>
+				<div>Injection d'un fichier Excel possible.</div>
+				<div> Il faut un format particulier - voir la <a href="documentation">documentation</a></div>
+				<div>Dernière injection de fichier : <b>@DateInjection</b></div>
+			</p>
+		</div>
+
+		<div class="col-sm">
+			<p>
+				<div>Injection d'un PowerPoint exporté en fichier MP4 possible.</div>
+				<div>Dernière injection de fichier : <b>@DateInjectionPowerPoint</b></div>
+			</p>
+		</div>
+	</div>
+</div>
+
+@*Séparateur*@
+<hr width="75%" color="blue" size="15" align=center />
+
+<br />
+
+<div class="container-fluid">
+	<div class="row">
+
+		@*Cadre pour afficher le message*@
+		<div class="col-lg-6">
+            <EditForm Model="@messageModel" 
+                    OnSubmit="HandleValidMessage">
+                <div class="border-black-without-margin">
+                    <MatTextField @bind-Value="@messageModel.MessageToDisplay"
+                                  Label="Saisir le message d'information"
+                                  TextArea="true"
+                                  Icon=""
+                                  FullWidth="true"></MatTextField>
+                </div>
+
+                <br />
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <MatRadioGroup @bind-Value="@messageModel.SelectedAttention"
+                                           Items="@(Enum.GetValues(typeof(AttentionMessage)).Cast<AttentionMessage>())">
+                            </MatRadioGroup>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <InputDate TValue="DateTime" 
+									   @bind-Value="@messageModel.DateFinAffichageMessage" />
+                        </div>
+
+                        <div class="col-sm-2">
+                            <button type="submit">Valider</button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+		</div>
+
+	</div>
+</div>
+
+@code {
+
+}

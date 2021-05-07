@@ -1,0 +1,48 @@
+@page "/documentation"
+
+@inject IJSRuntime JsRuntime
+
+<head>
+	<base href="~/" />
+</head>
+
+<h1>Documentation</h1>
+
+<div>
+	<h3>Injection fichier Excel</h3>
+
+	<p>
+		Il est possible d'injecter des données via un fichier Excel, par contre il faut suivre un modèle
+	</p>
+
+	<img src="../images/Excel_model.jpg" lt="ASP.NET" class="img-responsive" width="500" />
+
+	<br />
+
+	<div>
+		Voici un fichier Excel d'exemple : <a href="../MyStaticFiles/ExempleFichierSdk.xlsx" download="@fileName">fichier Excel</a>
+	</div>
+
+</div>
+
+<br />
+<br />
+<br />
+
+<div>
+	<h3>Injection fichier PowerPoint</h3>
+
+	<p>
+		Pour pouvoir afficher un PowerPoint dans l'application, il faut sauvegarder/exporter le PPT sous le format GIF.
+	</p>
+
+	<img src="../images/Ppt_export_gif.jpg" lt="ASP.NET" class="img-responsive" width="500"  />
+
+</div>
+
+@code{
+
+	string fileName = "ExempleFichierSdk.xlsx";
+
+}
+
