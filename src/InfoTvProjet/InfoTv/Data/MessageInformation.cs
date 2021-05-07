@@ -23,5 +23,11 @@ namespace InfoTv.Data
 		/// Quand ne plus l'afficher
 		/// </summary>
 		public DateTime FinAffichage { get; set; }
+
+		public MessageInformation()
+		{
+			Message = string.Empty;
+			Attention = AttentionMessage.Normal;
+		}
 	}
 }

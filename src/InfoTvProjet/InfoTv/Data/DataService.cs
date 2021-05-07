@@ -11,7 +11,7 @@ namespace InfoTv.Data
     /// <summary>
     /// Service de donnée de l'application
     /// </summary>
-    public class DataService
+    public class DataService : IDataService
     {
         #region Properties
 
@@ -25,9 +25,7 @@ namespace InfoTv.Data
         /// </summary>
 		public MessageInformation Message { get; set; }
 
-
         #endregion
-
 
         #region Public Methods
 
@@ -36,7 +34,7 @@ namespace InfoTv.Data
         /// </summary>
         /// <param name="messageInformation"></param>
         /// <returns></returns>
-		internal async Task SetNewMessage(MessageInformation messageInformation)
+		public async Task SetNewMessage(MessageInformation messageInformation)
         {
             Message = messageInformation;
             string contentJson = JsonConvert.SerializeObject(this.Message);
@@ -47,7 +45,7 @@ namespace InfoTv.Data
         /// Récupère le message d'information
         /// </summary>
         /// <returns></returns>
-        internal async Task<MessageInformation> GetMessage()
+        public async Task<MessageInformation> GetMessage()
         {
             string contentJson = await StorageHelper.GetFileInCache(NAME_FILE_MESSAGE);
             if (string.IsNullOrEmpty(contentJson))
@@ -62,8 +60,8 @@ namespace InfoTv.Data
             return Message;
         }
 
-        #endregion
+		#endregion
 
 
-    }
+	}
 }

@@ -49,12 +49,9 @@ namespace InfoTv
 			services.AddServerSideBlazor();
 			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 
-			services.AddSingleton<DataService>();
+			services.AddSingleton<IDataService, DataService>();
 			services.AddScoped<IInfoViewModel, InfoViewModel>();
-
-			// Service de donnée de l'application.
-			
-			//services.AddSingleton<InfoPlateauService>();
+			services.AddScoped<ISettingViewModel, SettingViewModel>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,76 @@
+﻿@page  "/settings"
+@inject ISettingViewModel ViewModel 
+@using InfoTv.Codes
+
+@attribute [Authorize(Roles = "Admin")]
+
+<h3>Fichiers de données</h3>
+
+@*Cadre pour afficher le FileUpload*@
+<MatFileUpload OnChange="@ViewModel.UploadFiles"
+			   title="Ajouter un fichier Excel valide, ou une vidéo MP4 de PowerPoint"
+			   Label="Déposer ou ouvrir un fichier" />
+
+<br />
+
+@*Cadre pour afficher les  infos pour les fichiers à injecter*@
+<div>
+	<p>
+		<div>Injection d'un PowerPoint exporté en fichier MP4 possible.</div>
+		<div>Dernière injection de fichier : <b>@ViewModel.DateInjectionPowerPoint</b></div>
+	</p>
+</div>
+
+@*Séparateur*@
+<hr width="75%" color="blue" size="15" align=center />
+
+<br />
+
+<div class="container-fluid">
+	<div class="row">
+
+		@*Cadre pour afficher le message*@
+		<div class="col-lg-6">
+			<EditForm Model="@ViewModel.MessageModel"
+					  OnSubmit="ViewModel.HandleValidMessage">
+				<div class="border-black-without-margin">
+					<MatTextField @bind-Value="@ViewModel.MessageModel.MessageToDisplay"
+								  Label="Saisir le message d'information"
+								  TextArea="true"
+								  Icon=""
+								  FullWidth="true"></MatTextField>
+				</div>
+
+				<br />
+
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-4">
+							<MatRadioGroup @bind-Value="@ViewModel.MessageModel.SelectedAttention"
+										   Items="@(Enum.GetValues(typeof(AttentionMessage)).Cast<AttentionMessage>())">
+							</MatRadioGroup>
+						</div>
+
+						<div class="col-sm-4">
+							<InputDate TValue="DateTime"
+									   @bind-Value="@ViewModel.MessageModel.DateFinAffichageMessage" />
+						</div>
+
+						<div class="col-sm-2">
+							<button type="submit">Valider</button>
+						</div>
+					</div>
+				</div>
+			</EditForm>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	protected override void OnInitialized()
+	{
+		ViewModel.SetStateHasChanged(StateHasChanged);
+		ViewModel.OnInitialized();
+	}
+}

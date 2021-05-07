@@ -22,9 +22,9 @@ namespace InfoTv.ViewModel
 
 		private MessageInformation messageInformation;
 
-		private DataService DataService;
+		private IDataService DataService;
 
-		public InfoViewModel(DataService dataService)
+		public InfoViewModel(IDataService dataService)
 		{
 			DataService = dataService;
 			

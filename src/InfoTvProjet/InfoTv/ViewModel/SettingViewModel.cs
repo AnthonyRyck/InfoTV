@@ -1,34 +1,17 @@
 ﻿using InfoTv.Codes;
 using InfoTv.Data;
+using InfoTv.ModelsValidation;
 using MatBlazor;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace InfoTv.Pages
+namespace InfoTv.ViewModel
 {
-	public partial class Settings : ComponentBase
+	public class SettingViewModel : ISettingViewModel
 	{
-
-		private const string FILE_NAME_POWERPOINT = "powerpoint.mp4";
-
-		#region Properties
-
-		
-		private IMatFileUploadEntry _fileMat;
-
-		[Inject]
-		protected IMatToaster Toaster { get; set; }
-
-		[Inject]
-		protected DataService ServiceData {get; set;}
-
 		/// <summary>
 		/// Indique la dernière injection de fichier.
 		/// </summary>
@@ -41,19 +24,23 @@ namespace InfoTv.Pages
 		/// <value></value>
 		public string DateInjectionPowerPoint { get; private set; }
 
-		private MessageModel messageModel = new MessageModel();
+		private IMatFileUploadEntry _fileMat;
+		private Action StateHasChanged;
 
-		#endregion
+		private const string FILE_NAME_POWERPOINT = "powerpoint.mp4";
 
-		#region Constructeur
+		private IDataService ServiceData;
+		private IMatToaster Toaster;
 
-		public Settings()
+		public SettingViewModel(IDataService dataService, IMatToaster toaster)
 		{
-			DateInjection = "Aucune injection de faite";
-			DateInjectionPowerPoint = "Aucune injection de faite";
+			ServiceData = dataService;
+			Toaster = toaster;
+
+			MessageModel = new MessageModel();
 		}
 
-		#endregion
+		public MessageModel MessageModel { get; set; }
 
 		#region Public Methods
 
@@ -85,17 +72,13 @@ namespace InfoTv.Pages
 			}
 		}
 
-		#endregion
-
-		#region Protected Methods
-
 		/// <summary>
 		/// A l'initialisation de la page
 		/// </summary>
 		/// <returns></returns>
-		protected override async Task OnInitializedAsync()
+		public async Task OnInitialized()
 		{
-			
+
 			//DateTime? dateLastInjection = ServiceData.GetLastInjection();
 			//if (dateLastInjection == null)
 			//{
@@ -107,57 +90,39 @@ namespace InfoTv.Pages
 			//}
 
 			string fileVideoPowertPoint = StorageHelper.GetPathFileInCacheFolder(FILE_NAME_POWERPOINT);
-			if(File.Exists(fileVideoPowertPoint))
+			if (File.Exists(fileVideoPowertPoint))
 			{
 				DateTime datelastWrite = File.GetLastWriteTime(fileVideoPowertPoint);
 				DateInjectionPowerPoint = datelastWrite.ToString("g", new CultureInfo("fr-FR"));
 			}
 
 			// Affichage Message Info
-			messageModel.MessageToDisplay = ServiceData.Message.Message;
-			messageModel.SelectedAttention = ServiceData.Message.Attention;
-			messageModel.DateFinAffichageMessage = ServiceData.Message.FinAffichage;
+			var message = await ServiceData.GetMessage();
+
+			MessageModel.MessageToDisplay = message.Message;
+			MessageModel.SelectedAttention = message.Attention;
+			MessageModel.DateFinAffichageMessage = message.FinAffichage;
 		}
 
-		#endregion
+		public void SetStateHasChanged(Action state)
+		{
+			StateHasChanged = state;
+		}
 
-
-
-
-
-		private async void HandleValidMessage()
-        {
-			DateTime dateFrance = messageModel.DateFinAffichageMessage.ToLocalTime();
+		public async void HandleValidMessage()
+		{
+			DateTime dateFrance = MessageModel.DateFinAffichageMessage.ToLocalTime();
 
 			MessageInformation messageInformation = new MessageInformation()
 			{
-				Message = messageModel.MessageToDisplay,
-				Attention = messageModel.SelectedAttention,
+				Message = MessageModel.MessageToDisplay,
+				Attention = MessageModel.SelectedAttention,
 				FinAffichage = dateFrance
 			};
 
 			await ServiceData.SetNewMessage(messageInformation);
 		}
-	}
 
-	public class MessageModel
-    {
-		/// <summary>
-		/// Message a afficher
-		/// </summary>
-		[Required]
-		public string MessageToDisplay { get; set; }
-
-		/// <summary>
-		/// Choix de l'attention.
-		/// </summary>
-		[Required]
-		public AttentionMessage SelectedAttention { get; set; }
-
-		/// <summary>
-		/// Date de fin d'affichage du message
-		/// </summary>
-		[Required]
-		public DateTime DateFinAffichageMessage { get; set; }
+		#endregion
 	}
 }
