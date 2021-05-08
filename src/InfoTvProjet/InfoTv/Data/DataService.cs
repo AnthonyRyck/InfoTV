@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using InfoTv.Codes;
 using System.Globalization;
+using MatBlazor;
 
 namespace InfoTv.Data
 {
@@ -101,6 +102,38 @@ namespace InfoTv.Data
                 return StorageHelper.CreatePathFileInCacheFolder(1 + FILE_NAME_POWERPOINT);
 			}
         }
+
+
+        public async Task SavePowerPointVideo(IMatFileUploadEntry file)
+		{
+            string pathFile = GetNextFileName();
+
+            using (var fileStream = File.Create(pathFile))
+            {
+                await file.WriteToStreamAsync(fileStream);
+            }
+        }
+
+        public async Task DeleteOldPowerPoint()
+		{
+            var cacheFolder = StorageHelper.GetCacheFolder();
+
+            var directoryInfo = new DirectoryInfo(cacheFolder);
+            var filesInfo = directoryInfo.GetFiles()
+                                        .Where(x => x.Name.Contains(FILE_NAME_POWERPOINT))
+                                        .ToList();
+
+            var fileLastDate = filesInfo.Max(x => x.LastWriteTime);
+
+			foreach (var item in filesInfo)
+			{
+                if(item.LastWriteTime.CompareTo(fileLastDate) < 0)
+				{
+                    await Task.Factory.StartNew(() => item.Delete());
+                }
+			}
+        }
+
 
         #endregion
 

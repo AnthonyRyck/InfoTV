@@ -25,7 +25,6 @@ namespace InfoTv.ViewModel
 		/// <value></value>
 		public string DateInjectionPowerPoint { get; private set; }
 
-		private IMatFileUploadEntry _fileMat;
 		private Action StateHasChanged;
 
 		private NavigationManager navigationManager;
@@ -57,18 +56,13 @@ namespace InfoTv.ViewModel
 		{
 			if (files.Count() >= 1)
 			{
-				_fileMat = files.FirstOrDefault();
+				IMatFileUploadEntry fileMat = files.FirstOrDefault();
 
-				var extensionFile = Path.GetExtension(_fileMat.Name);
+				var extensionFile = Path.GetExtension(fileMat.Name);
 
 				if (extensionFile == ".mp4")
 				{
-					string pathFile = ServiceData.GetNextFileName();
-
-					using (var fileStream = File.Create(pathFile))
-					{
-						await _fileMat.WriteToStreamAsync(fileStream);
-					}
+					await ServiceData.SavePowerPointVideo(fileMat);
 
 					DateInjectionPowerPoint = DateTime.Now.ToString("g", new CultureInfo("fr-FR"));
 					StateHasChanged();
@@ -76,6 +70,8 @@ namespace InfoTv.ViewModel
 					// Envoie pour les autres clients
 					var tempFileName = ServiceData.GetPowerPointFile();
 					await hubService.SendAsync("SyncPowerPoint", tempFileName.NomFichier);
+
+					await ServiceData.DeleteOldPowerPoint();
 				}
 			}
 		}

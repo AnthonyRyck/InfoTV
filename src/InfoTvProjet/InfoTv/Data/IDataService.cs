@@ -1,4 +1,5 @@
 ﻿using InfoTv.Codes;
+using MatBlazor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,10 @@ namespace InfoTv.Data
 
 		InfoPowerPointFile GetPowerPointFile();
 		string GetNextFileName();
+
+
+		Task SavePowerPointVideo(IMatFileUploadEntry file);
+
+		Task DeleteOldPowerPoint();
 	}
 }
