@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace InfoTv.ViewModel
 {
@@ -27,11 +28,19 @@ namespace InfoTv.ViewModel
 		private NavigationManager navigationManager;
 		private IHubService hubService;
 		private Action StateHasChanged;
+
+		private Func<Task> Invocateur;
+
 		private IDataService DataService;
+
+		public Timer TimerMessage;
 
 		public InfoViewModel(IDataService dataService, NavigationManager navigation, IHubService hubSvc)
 		{
 			DataService = dataService;
+
+			TimerMessage = new Timer();
+			TimerMessage.Elapsed += OnTimerMessage;
 
 			navigationManager = navigation;
 			hubService = hubSvc;
@@ -42,6 +51,10 @@ namespace InfoTv.ViewModel
 			StateHasChanged = state;
 		}
 
+		public void SetInvocateur(Func<Task> invoke)
+		{
+			Invocateur = invoke;
+		}
 
 		public async Task LoadMessage()
 		{
@@ -138,7 +151,35 @@ namespace InfoTv.ViewModel
 			Message = messageInformation.Message;
 			SelectColor(messageInformation.Attention);
 			SelectCssToDisplay(messageInformation.FinAffichage);
+
+			if (!string.IsNullOrEmpty(Message))
+			{
+				TimeSpan timeSpanNow = new TimeSpan(DateTime.Now.Ticks);
+				TimeSpan timeSpanFutur = new TimeSpan(messageInformation.FinAffichage.Ticks);
+
+				TimerMessage.Interval = (timeSpanFutur - timeSpanNow).TotalMilliseconds;
+				TimerMessage.Enabled = true;
+			}
+			else
+			{
+				TimerMessage.Stop();
+			}
 		}
+
+
+		private async void OnTimerMessage(Object source, ElapsedEventArgs e)
+		{
+			MessageInformation messageInformation = new MessageInformation()
+			{
+				Message = string.Empty,
+				Attention = AttentionMessage.Normal,
+				FinAffichage = DateTime.MaxValue
+			};
+			
+			SetMessage(messageInformation);
+			await Invocateur.Invoke();
+		}
+
 
 		#endregion
 	}

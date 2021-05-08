@@ -3,19 +3,14 @@
 @inject IInfoViewModel ViewModel
 
 <div class="row-full">
-	<div>
-		<MessageInfo ColorDisplay="@ViewModel.ColorMessage"
-					 Visibility="@ViewModel.Visibility"
-					 MessageToDisplay="@ViewModel.Message" />
-	</div>
-
-	@*<div class="center-content">
-			<video autoplay loop
-				class="video">
-				<source src="@ViewModel.SourcePowerpoint" type="video/mp4" />
-			</video>
-		</div>*@
-
+	@if(!string.IsNullOrEmpty(ViewModel.Message))
+	{ 
+		<div>
+			<MessageInfo ColorDisplay="@ViewModel.ColorMessage"
+						 Visibility="@ViewModel.Visibility"
+						 MessageToDisplay="@ViewModel.Message" />
+		</div>
+	}
 	<div class="center-content">
 		@ViewModel.RenderVideo
 	</div>
@@ -28,7 +23,9 @@
 		await ViewModel.LoadMessage();
 		ViewModel.LoadPowerPoint();
 		StateHasChanged();
+		
 		ViewModel.SetStateHasChanged(StateHasChanged);
+		ViewModel.SetInvocateur(Invoke);
 
 		await ViewModel.InitHub();
 	}
@@ -41,5 +38,10 @@
 	public async ValueTask DisposeAsync()
 	{
 		await ViewModel.DisposeHubConnection();
+	}
+
+	private async Task Invoke()
+	{
+		await InvokeAsync(() => {StateHasChanged();});
 	}
 }

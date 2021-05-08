@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
@@ -29,7 +28,7 @@ namespace InfoTv.Data
         /// </summary>
 		public MessageInformation Message { get; set; }
 
-        #endregion
+		#endregion
 
         #region Public Methods
 
@@ -170,6 +169,9 @@ namespace InfoTv.Data
 
             return ++currentIndex;
         }
+
+
+        
 
 		#endregion
 

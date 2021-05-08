@@ -56,7 +56,6 @@ namespace InfoTv
 			services.AddScoped<IInfoViewModel, InfoViewModel>();
 			services.AddScoped<ISettingViewModel, SettingViewModel>();
 
-
 			services.AddSignalR();
 			services.AddResponseCompression(opts =>
 			{

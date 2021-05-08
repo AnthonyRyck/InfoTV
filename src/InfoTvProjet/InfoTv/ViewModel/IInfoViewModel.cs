@@ -25,5 +25,8 @@ namespace InfoTv.ViewModel
 		Task InitHub();
 
 		Task DisposeHubConnection();
+
+
+		void SetInvocateur(Func<Task> invoke);
 	}
 }
