@@ -1,4 +1,5 @@
 ﻿using InfoTv.Codes;
+using InfoTv.Composants;
 using InfoTv.Data;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -19,6 +20,8 @@ namespace InfoTv.ViewModel
 		public string Message { get; set; }
 
 		public string Visibility { get; set; }
+
+		public RenderFragment RenderVideo { get; set; }
 
 
 		private NavigationManager navigationManager;
@@ -50,6 +53,14 @@ namespace InfoTv.ViewModel
 		{
 			InfoPowerPointFile sourceFile = DataService.GetPowerPointFile();
 			SourcePowerpoint = "../Cache/" + sourceFile.NomFichier;
+
+			RenderFragment CreateCompo() => builder =>
+			{
+				builder.OpenComponent(0, typeof(VideoDisplay));
+				builder.AddAttribute(1, "SourcePowerpoint", SourcePowerpoint);
+				builder.CloseComponent();
+			};
+			RenderVideo = CreateCompo();
 		}
 
 		#region Hub Connection
@@ -61,6 +72,17 @@ namespace InfoTv.ViewModel
 			hubService.On<string>("SyncPowerPoint", (nouveauPpt) =>
 			{
 				SourcePowerpoint = "../Cache/" + nouveauPpt;
+				RenderVideo = null;
+				StateHasChanged.Invoke();
+
+				RenderFragment CreateCompo() => builder =>
+				{
+					builder.OpenComponent(0, typeof(VideoDisplay));
+					builder.AddAttribute(1, "SourcePowerpoint", SourcePowerpoint);
+					builder.CloseComponent();
+				};
+				RenderVideo = CreateCompo();
+
 				StateHasChanged.Invoke();
 			});
 
