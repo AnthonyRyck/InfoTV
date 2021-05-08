@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InfoTv.Codes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,5 +25,8 @@ namespace InfoTv.Data
 		/// </summary>
 		/// <returns></returns>
 		Task<MessageInformation> GetMessage();
+
+		InfoPowerPointFile GetPowerPointFile();
+		string GetNextFileName();
 	}
 }

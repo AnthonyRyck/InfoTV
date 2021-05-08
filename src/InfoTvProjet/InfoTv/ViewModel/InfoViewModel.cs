@@ -27,27 +27,23 @@ namespace InfoTv.ViewModel
 		public InfoViewModel(IDataService dataService)
 		{
 			DataService = dataService;
-			
 		}
 
-		private const string FILE_NAME_POWERPOINT = "powerpoint.mp4";
+		
 		public async Task LoadMessage()
 		{
 			messageInformation = await DataService.GetMessage();
 			Message = messageInformation.Message;
 			SelectColor(messageInformation.Attention);
 			SelectCssToDisplay(messageInformation.FinAffichage);
-
-
-			// Chargement du MP4, s'il existe.
-			string filePowerPoint = StorageHelper.GetPathFileInCacheFolder(FILE_NAME_POWERPOINT);
-
-			if (File.Exists(filePowerPoint))
-			{
-				SourcePowerpoint = "../Cache/" + FILE_NAME_POWERPOINT;
-			}
 		}
 
+
+		public void LoadPowerPoint()
+		{
+			InfoPowerPointFile sourceFile = DataService.GetPowerPointFile();
+			SourcePowerpoint = "../Cache/" + sourceFile.NomFichier;
+		}
 
 		#region Private methods
 

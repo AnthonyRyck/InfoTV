@@ -95,15 +95,11 @@ namespace InfoTv.Codes
 			await File.WriteAllTextAsync(pathFileData, contentJson);
 		}
 
-		#endregion
-
-		#region Private Methods
-
 		/// <summary>
 		/// Retourne le chemin du répertoire Cache, crée le chemin si non existant
 		/// </summary>
 		/// <returns></returns>
-		private static string GetCacheFolder()
+		internal static string GetCacheFolder()
 		{
 			string pathCache = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CACHE_FOLDER);
 
@@ -115,6 +111,10 @@ namespace InfoTv.Codes
 
 			return pathCache;
 		}
+
+		#endregion
+
+		#region Private Methods
 
 		/// <summary>
 		/// Retourne le chemin du répertoire Cache, crée le chemin si non existant

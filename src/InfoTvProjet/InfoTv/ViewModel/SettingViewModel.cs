@@ -27,8 +27,6 @@ namespace InfoTv.ViewModel
 		private IMatFileUploadEntry _fileMat;
 		private Action StateHasChanged;
 
-		private const string FILE_NAME_POWERPOINT = "powerpoint.mp4";
-
 		private IDataService ServiceData;
 		private IMatToaster Toaster;
 
@@ -59,7 +57,8 @@ namespace InfoTv.ViewModel
 
 				if (extensionFile == ".mp4")
 				{
-					string pathFile = StorageHelper.CreatePathFileInCacheFolder(FILE_NAME_POWERPOINT);
+					//string pathFile = StorageHelper.CreatePathFileInCacheFolder(FILE_NAME_POWERPOINT);
+					string pathFile = ServiceData.GetNextFileName();
 
 					using (var fileStream = File.Create(pathFile))
 					{
@@ -89,12 +88,17 @@ namespace InfoTv.ViewModel
 			//	DateInjection = dateLastInjection?.ToString("g", new CultureInfo("fr-FR"));
 			//}
 
-			string fileVideoPowertPoint = StorageHelper.GetPathFileInCacheFolder(FILE_NAME_POWERPOINT);
-			if (File.Exists(fileVideoPowertPoint))
-			{
-				DateTime datelastWrite = File.GetLastWriteTime(fileVideoPowertPoint);
-				DateInjectionPowerPoint = datelastWrite.ToString("g", new CultureInfo("fr-FR"));
-			}
+			//string fileVideoPowertPoint = StorageHelper.GetPathFileInCacheFolder(FILE_NAME_POWERPOINT);
+
+			//string fileVideoPowertPoint = ServiceData.GetNameFilePowerPoint();
+			//if (File.Exists(fileVideoPowertPoint))
+			//{
+			//	DateTime datelastWrite = File.GetLastWriteTime(fileVideoPowertPoint);
+			//	DateInjectionPowerPoint = datelastWrite.ToString("g", new CultureInfo("fr-FR"));
+			//}
+
+			InfoPowerPointFile infoTemp = ServiceData.GetPowerPointFile();
+			DateInjectionPowerPoint = infoTemp.DateLastWrite;
 
 			// Affichage Message Info
 			var message = await ServiceData.GetMessage();

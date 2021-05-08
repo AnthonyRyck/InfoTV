@@ -33,7 +33,14 @@
 		<div class="col-lg-6">
 			<EditForm Model="@ViewModel.MessageModel"
 					  OnSubmit="ViewModel.HandleValidMessage">
+
+				@* Super IMPORTANT !!! *@
+				<DataAnnotationsValidator />
+
 				<div class="border-black-without-margin">
+					<div>
+						<ValidationMessage For="@(() => ViewModel.MessageModel.MessageToDisplay)" />
+					</div>
 					<MatTextField @bind-Value="@ViewModel.MessageModel.MessageToDisplay"
 								  Label="Saisir le message d'information"
 								  TextArea="true"
@@ -46,12 +53,18 @@
 				<div class="container-fluid">
 					<div class="row">
 						<div class="col-sm-4">
+							<div>
+								<ValidationMessage For="@(() => ViewModel.MessageModel.SelectedAttention)" />
+							</div>
 							<MatRadioGroup @bind-Value="@ViewModel.MessageModel.SelectedAttention"
 										   Items="@(Enum.GetValues(typeof(AttentionMessage)).Cast<AttentionMessage>())">
 							</MatRadioGroup>
 						</div>
 
 						<div class="col-sm-4">
+							<div>
+								<ValidationMessage For="@(() => ViewModel.MessageModel.DateFinAffichageMessage)" />
+							</div>
 							<InputDate TValue="DateTime"
 									   @bind-Value="@ViewModel.MessageModel.DateFinAffichageMessage" />
 						</div>
