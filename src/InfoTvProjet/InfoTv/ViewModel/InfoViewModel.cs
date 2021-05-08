@@ -1,5 +1,6 @@
 ﻿using InfoTv.Codes;
 using InfoTv.Data;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,30 +21,64 @@ namespace InfoTv.ViewModel
 		public string Visibility { get; set; }
 
 
-		private MessageInformation messageInformation;
-
+		private NavigationManager navigationManager;
+		private IHubService hubService;
+		private Action StateHasChanged;
 		private IDataService DataService;
 
-		public InfoViewModel(IDataService dataService)
+		public InfoViewModel(IDataService dataService, NavigationManager navigation, IHubService hubSvc)
 		{
 			DataService = dataService;
+
+			navigationManager = navigation;
+			hubService = hubSvc;
 		}
 
-		
+		public void SetStateHasChanged(Action state)
+		{
+			StateHasChanged = state;
+		}
+
+
 		public async Task LoadMessage()
 		{
-			messageInformation = await DataService.GetMessage();
-			Message = messageInformation.Message;
-			SelectColor(messageInformation.Attention);
-			SelectCssToDisplay(messageInformation.FinAffichage);
+			var messageInformation = await DataService.GetMessage();
+			SetMessage(messageInformation);
 		}
-
 
 		public void LoadPowerPoint()
 		{
 			InfoPowerPointFile sourceFile = DataService.GetPowerPointFile();
 			SourcePowerpoint = "../Cache/" + sourceFile.NomFichier;
 		}
+
+		#region Hub Connection
+
+		public async Task InitHub()
+		{
+			hubService.InitHub(navigationManager.ToAbsoluteUri("/infohub"));
+
+			hubService.On<string>("SyncPowerPoint", (nouveauPpt) =>
+			{
+				SourcePowerpoint = "../Cache/" + nouveauPpt;
+				StateHasChanged.Invoke();
+			});
+
+			hubService.On<MessageInformation>("ReceiveNewMessage", (newMessage) =>
+			{
+				SetMessage(newMessage);
+				StateHasChanged.Invoke();
+			});
+
+			await hubService.HubConnection.StartAsync();
+		}
+
+		public async Task DisposeHubConnection()
+		{
+			await hubService.DisposeAsync();
+		}
+
+		#endregion
 
 		#region Private methods
 
@@ -74,6 +109,13 @@ namespace InfoTv.ViewModel
 			Visibility = (dateNow.CompareTo(dateFinMessage) > 0)
 			   ? "visibilityHidden"
 			   : "visibilityDisplay";
+		}
+
+		private void SetMessage(MessageInformation messageInformation)
+		{
+			Message = messageInformation.Message;
+			SelectColor(messageInformation.Attention);
+			SelectCssToDisplay(messageInformation.FinAffichage);
 		}
 
 		#endregion

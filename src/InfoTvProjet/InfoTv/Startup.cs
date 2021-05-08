@@ -13,6 +13,9 @@ using MatBlazor;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using InfoTv.ViewModel;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.Linq;
+using InfoTv.Hubs;
 
 namespace InfoTv
 {
@@ -52,11 +55,23 @@ namespace InfoTv
 			services.AddSingleton<IDataService, DataService>();
 			services.AddScoped<IInfoViewModel, InfoViewModel>();
 			services.AddScoped<ISettingViewModel, SettingViewModel>();
+
+
+			services.AddSignalR();
+			services.AddResponseCompression(opts =>
+			{
+				opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+					new[] { "application/octet-stream" });
+			});
+
+			services.AddTransient<IHubService, HubService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
 		{
+			app.UseResponseCompression();
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -101,6 +116,8 @@ namespace InfoTv
 			{
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
+				// pour SignalR
+				endpoints.MapHub<InfoHub>("/infohub");
 				endpoints.MapFallbackToPage("/_Host");
 			});
 		}

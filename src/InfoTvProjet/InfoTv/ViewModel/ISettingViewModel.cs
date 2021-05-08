@@ -1,8 +1,6 @@
 ﻿using InfoTv.ModelsValidation;
 using MatBlazor;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace InfoTv.ViewModel
@@ -23,5 +21,9 @@ namespace InfoTv.ViewModel
 		void HandleValidMessage();
 
 		void SetStateHasChanged(Action state);
+
+		Task InitHub();
+
+		Task DisposeHubConnection();
 	}
 }

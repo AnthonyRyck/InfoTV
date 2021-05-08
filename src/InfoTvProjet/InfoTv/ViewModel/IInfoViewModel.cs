@@ -15,8 +15,14 @@ namespace InfoTv.ViewModel
 
 		string Visibility { get; set; }
 
+		void SetStateHasChanged(Action state);
+
 		Task LoadMessage();
 
 		void LoadPowerPoint();
+
+		Task InitHub();
+
+		Task DisposeHubConnection();
 	}
 }

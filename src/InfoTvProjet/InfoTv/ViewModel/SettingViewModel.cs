@@ -2,6 +2,7 @@
 using InfoTv.Data;
 using InfoTv.ModelsValidation;
 using MatBlazor;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Globalization;
 using System.IO;
@@ -27,13 +28,18 @@ namespace InfoTv.ViewModel
 		private IMatFileUploadEntry _fileMat;
 		private Action StateHasChanged;
 
+		private NavigationManager navigationManager;
+		private IHubService hubService;
 		private IDataService ServiceData;
 		private IMatToaster Toaster;
 
-		public SettingViewModel(IDataService dataService, IMatToaster toaster)
+		public SettingViewModel(IDataService dataService, IMatToaster toaster, NavigationManager navigation, IHubService hubSvc)
 		{
 			ServiceData = dataService;
 			Toaster = toaster;
+
+			navigationManager = navigation;
+			hubService = hubSvc;
 
 			MessageModel = new MessageModel();
 		}
@@ -57,7 +63,6 @@ namespace InfoTv.ViewModel
 
 				if (extensionFile == ".mp4")
 				{
-					//string pathFile = StorageHelper.CreatePathFileInCacheFolder(FILE_NAME_POWERPOINT);
 					string pathFile = ServiceData.GetNextFileName();
 
 					using (var fileStream = File.Create(pathFile))
@@ -67,6 +72,10 @@ namespace InfoTv.ViewModel
 
 					DateInjectionPowerPoint = DateTime.Now.ToString("g", new CultureInfo("fr-FR"));
 					StateHasChanged();
+
+					// Envoie pour les autres clients
+					var tempFileName = ServiceData.GetPowerPointFile();
+					await hubService.SendAsync("SyncPowerPoint", tempFileName.NomFichier);
 				}
 			}
 		}
@@ -125,7 +134,26 @@ namespace InfoTv.ViewModel
 			};
 
 			await ServiceData.SetNewMessage(messageInformation);
+
+			// Envoie pour les autres clients
+			await hubService.SendAsync("ReceiveNewMessage", messageInformation);
 		}
+
+		#region HubConnection
+
+		public async Task InitHub()
+		{
+			hubService.InitHub(navigationManager.ToAbsoluteUri("/infohub"));
+			await hubService.HubConnection.StartAsync();
+		}
+
+		public async Task DisposeHubConnection()
+		{
+			await hubService.DisposeAsync();
+		}
+
+		#endregion
+
 
 		#endregion
 	}

@@ -24,6 +24,18 @@
 		await ViewModel.LoadMessage();
 		ViewModel.LoadPowerPoint();
 		StateHasChanged();
+		ViewModel.SetStateHasChanged(StateHasChanged);
+
+		await ViewModel.InitHub();
 	}
 
+	/// <summary>
+	/// Libère les ressources du HubConnection,
+	/// quand l'utilisateur quitte la vue.
+	/// </summary>
+	/// <returns></returns>
+	public async ValueTask DisposeAsync()
+	{
+		await ViewModel.DisposeHubConnection();
+	}
 }
